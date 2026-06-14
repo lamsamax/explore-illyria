@@ -74,8 +74,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
           {/* Globe wrapper */}
           <div id="globe-wrapper"
+            className="globe-size"
             style={{
-              width: '460px', height: '460px',
               borderRadius: '50%',
               cursor: 'pointer',
               position: 'relative',

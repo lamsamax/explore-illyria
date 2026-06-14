@@ -15,7 +15,7 @@ export function WhyUs() {
   const inView = useInView(ref, { once: true, margin: '-8%' });
 
   return (
-    <section id="zasto-mi" ref={ref} style={{ background: '#f0f7f4', padding: '5rem 4rem' }}>
+    <section id="zasto-mi" ref={ref} style={{ background: '#f0f7f4', padding: 'clamp(3rem, 6vw, 5rem) clamp(1.25rem, 5vw, 4rem)' }}>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7 }} style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
         <p style={{ fontSize: '0.7rem', letterSpacing: '0.4em', textTransform: 'uppercase', color: '#2d6a4f', marginBottom: '0.8rem', fontFamily: 'Inter, sans-serif' }}>Why us</p>
         <h2 style={{ fontFamily: 'Lora, serif', fontSize: 'clamp(1.8rem, 3vw, 2.5rem)', fontWeight: 600, color: '#1a1a1a' }}>
@@ -24,7 +24,7 @@ export function WhyUs() {
       </motion.div>
 
       {inView && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem', maxWidth: '1100px', margin: '0 auto' }}>
+        <div className="why-us-grid">
           {REASONS.map((r, i) => (
             <motion.div key={r.title} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: i * 0.1 }}
               style={{ background: 'white', borderRadius: '20px', padding: '2rem', boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}

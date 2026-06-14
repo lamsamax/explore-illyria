@@ -21,7 +21,7 @@ export function Categories() {
   const router = useRouter();
 
   return (
-    <section id="kategorije" ref={ref} style={{ background: 'white', padding: '4rem', borderTop: '1px solid #eee' }}>
+    <section id="kategorije" ref={ref} style={{ background: 'white', padding: 'clamp(2rem, 5vw, 4rem) clamp(1.25rem, 5vw, 4rem)', borderTop: '1px solid #eee' }}>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7 }} style={{ marginBottom: '2.5rem', textAlign: 'center' }}>
         <p style={{ fontSize: '0.7rem', letterSpacing: '0.4em', textTransform: 'uppercase', color: '#2d6a4f', marginBottom: '0.8rem', fontFamily: 'Inter, sans-serif' }}>
           Explore by category
@@ -32,7 +32,7 @@ export function Categories() {
       </motion.div>
 
       {inView && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', gap: '0.8rem', maxWidth: '1100px', margin: '0 auto' }}>
+        <div className="categories-grid">
           {CATS.map((cat, i) => (
             <motion.button
               key={cat.name}
