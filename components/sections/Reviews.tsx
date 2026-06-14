@@ -138,18 +138,18 @@ export function Reviews() {
   const tour = FEATURED_TOURS[active];
 
   return (
-    <section id="istaknute" ref={ref} style={{ background: '#faf9f6', padding: '5rem 4rem', borderTop: '1px solid #eee' }}>
+    <section id="istaknute" ref={ref} style={{ background: '#faf9f6', padding: 'clamp(3rem, 6vw, 5rem) clamp(1.25rem, 5vw, 4rem)', borderTop: '1px solid #eee' }}>
 
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7 }} style={{ marginBottom: '2.5rem' }}>
         <p style={{ fontSize: '0.7rem', letterSpacing: '0.4em', textTransform: 'uppercase', color: '#2d6a4f', marginBottom: '0.8rem', fontFamily: 'Inter, sans-serif' }}>
           Don't miss out
         </p>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+        <div className="reviews-header">
           <h2 style={{ fontFamily: 'Lora, serif', fontSize: 'clamp(2rem, 3.5vw, 3rem)', fontWeight: 600, color: '#1a1a1a', lineHeight: 1.2 }}>
             Featured <em style={{ color: '#f4a261', fontStyle: 'italic' }}>tours</em>
           </h2>
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
             {FEATURED_TOURS.map((t, i) => (
               <button key={t.id} onClick={() => setActive(i)}
                 style={{ padding: '0.5rem 1.2rem', borderRadius: '999px', border: `2px solid ${active === i ? '#2d6a4f' : '#e0e0e0'}`, background: active === i ? '#2d6a4f' : 'white', color: active === i ? 'white' : '#888', fontSize: '0.78rem', fontWeight: 600, cursor: 'pointer', fontFamily: 'Inter, sans-serif', transition: 'all 0.2s' }}
@@ -163,10 +163,10 @@ export function Reviews() {
 
       {inView && (
         <motion.div key={active} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}
-          style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 8px 40px rgba(0,0,0,0.1)' }}
+          className="featured-grid"
         >
           {/* Left side — image */}
-          <div style={{ position: 'relative', minHeight: '520px' }}>
+          <div className="featured-img-side">
             <img src={tour.image} alt={tour.name} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
             <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 60%)' }} />
 

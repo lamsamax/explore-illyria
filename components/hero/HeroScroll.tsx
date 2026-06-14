@@ -62,7 +62,7 @@ export function HeroScroll() {
             </span>
           </a>
 
-          <div style={{ display: 'flex', gap: '2rem' }}>
+          <div className="nav-links">
             {[
               { label: 'Tours', href: '/destinacije' },
               { label: 'Activities', href: '#kategorije' },
@@ -138,7 +138,7 @@ export function HeroScroll() {
       </section>
 
       {/* Stats bar */}
-      <div style={{ background: 'white', padding: '1.5rem 4rem', display: 'flex', justifyContent: 'center', gap: '4rem', borderBottom: '1px solid #e8e8e4', flexWrap: 'wrap' }}>
+      <div style={{ background: 'white', padding: '1.5rem clamp(1.25rem, 5vw, 4rem)', display: 'flex', justifyContent: 'center', gap: 'clamp(1.5rem, 4vw, 4rem)', borderBottom: '1px solid #e8e8e4', flexWrap: 'wrap' }}>
         {[['5,000+', 'Happy travellers'], ['150+', 'Activities'], ['6', 'Balkan countries'], ['4.9★', 'Average rating']].map(([num, label]) => (
           <div key={label} style={{ textAlign: 'center' }}>
             <p style={{ fontFamily: 'Lora, serif', fontSize: '1.6rem', fontWeight: 700, color: '#2d6a4f', margin: 0 }}>{num}</p>

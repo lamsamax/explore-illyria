@@ -2,9 +2,9 @@
 
 export function Footer() {
   return (
-    <footer style={{ background: '#1a2e1e', color: 'white', padding: '4rem', borderTop: '1px solid #2d4a32' }}>
+    <footer style={{ background: '#1a2e1e', color: 'white', padding: 'clamp(2rem, 5vw, 4rem) clamp(1.25rem, 5vw, 4rem)', borderTop: '1px solid #2d4a32' }}>
       <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: '3rem', marginBottom: '3rem' }}>
+        <div className="footer-grid">
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1rem' }}>
               <svg width="28" height="28" viewBox="0 0 100 100" fill="none">
@@ -57,7 +57,7 @@ export function Footer() {
           ))}
         </div>
 
-        <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className="footer-bottom">
           <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.35)' }}>© {new Date().getFullYear()} Explore Illyria. All rights reserved.</p>
           <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.35)' }}>Sarajevo, Bosnia and Herzegovina</p>
         </div>

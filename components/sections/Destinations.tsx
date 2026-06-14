@@ -149,16 +149,16 @@ function DestModal({ dest, onClose }: { dest: Dest; onClose: () => void }) {
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: 40, scale: 0.96 }}
         transition={{ duration: 0.35 }}
+        className="modal-grid"
         style={{
           background: 'white', borderRadius: '24px',
           width: '100%', maxWidth: '900px',
           maxHeight: '90vh', overflow: 'auto',
-          display: 'grid', gridTemplateColumns: '1fr 1fr',
         }}
         onClick={e => e.stopPropagation()}
       >
         {/* Left — image */}
-        <div style={{ position: 'relative', minHeight: '500px' }}>
+        <div className="modal-img-side">
           <img src={dest.image} alt={dest.name}
             style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', borderRadius: '24px 0 0 24px' }} />
           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 60%)', borderRadius: '24px 0 0 24px' }} />
@@ -277,7 +277,7 @@ export function Destinations() {
 
   return (
     <>
-      <section ref={ref} style={{ background: '#faf9f6', padding: '5rem 4rem 6rem' }}>
+      <section ref={ref} style={{ background: '#faf9f6', padding: 'clamp(3rem, 6vw, 5rem) clamp(1.25rem, 5vw, 4rem) clamp(4rem, 8vw, 6rem)' }}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -287,7 +287,7 @@ export function Destinations() {
           <p style={{ fontSize: '0.7rem', letterSpacing: '0.4em', textTransform: 'uppercase', color: '#2d6a4f', marginBottom: '0.8rem', fontFamily: 'Inter, sans-serif' }}>
             Popular destinations
           </p>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+          <div className="dest-header">
             <h2 style={{ fontFamily: 'Lora, serif', fontSize: 'clamp(2rem, 3.5vw, 3rem)', fontWeight: 600, color: '#1a1a1a', lineHeight: 1.2 }}>
               Where do you want<br /><em style={{ color: '#f4a261', fontStyle: 'italic' }}>to go?</em>
             </h2>
@@ -298,7 +298,7 @@ export function Destinations() {
         </motion.div>
 
         {inView && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.2rem' }}>
+          <div className="destinations-grid">
             {DESTINATIONS.map((dest, i) => (
               <motion.div
                 key={dest.name}
