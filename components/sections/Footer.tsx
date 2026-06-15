@@ -1,10 +1,20 @@
 'use client';
 
 export function Footer() {
+  const companyLinks = [
+    { label: 'About us', href: '/about' },
+    { label: 'Contact', href: '/contact' },
+    { label: 'Privacy policy', href: '#' },
+    { label: 'Victorious Travel', href: 'https://victorius.ba/' },
+    { label: 'Studentski pohodi', href: 'https://pohodi.ba/' },
+    { label: 'Snow Hunters', href: 'https://snowhunters.ba/' },
+  ];
+
   return (
     <footer style={{ background: '#1a2e1e', color: 'white', padding: 'clamp(2rem, 5vw, 4rem) clamp(1.25rem, 5vw, 4rem)', borderTop: '1px solid #2d4a32' }}>
       <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-        <div className="footer-grid">
+        <div className="footer-grid-new">
+          {/* Brand */}
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1rem' }}>
               <svg width="28" height="28" viewBox="0 0 100 100" fill="none">
@@ -21,40 +31,25 @@ export function Footer() {
             </p>
           </div>
 
-          {[
-            { title: 'Destinations', links: ['Bosnia & Herzegovina', 'Croatia', 'Montenegro', 'Albania', 'N. Macedonia', 'Serbia'] },
-            { title: 'Categories', links: ['Hiking', 'Culture', 'Gastronomy', 'Rafting', 'Photo tours'] },
-            {
-              title: 'Company',
-              links: [
-                { label: 'About us', href: '#' },
-                { label: 'Contact', href: '#' },
-                { label: 'Privacy policy', href: '#' },
-                { label: 'Victorious Travel', href: 'https://victorius.ba/' },
-                { label: 'Studentski pohodi', href: 'https://pohodi.ba/' },
-                { label: 'Snow Hunters', href: 'https://snowhunters.ba/' },
-              ]
-            },
-          ].map(col => (
-            <div key={col.title}>
-              <p style={{ fontSize: '0.72rem', letterSpacing: '0.25em', textTransform: 'uppercase', color: '#f4a261', marginBottom: '1.2rem' }}>{col.title}</p>
-              {col.links.map((link: any) => (
-                <a key={typeof link === 'string' ? link : link.label}
-                  href={typeof link === 'string' ? '#' : link.href}
-                  target={typeof link === 'object' && link.href.startsWith('http') ? '_blank' : undefined}
-                  rel={typeof link === 'object' && link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                  style={{ display: 'block', fontSize: '0.82rem', color: 'rgba(255,255,255,0.55)', textDecoration: 'none', marginBottom: '0.6rem', transition: 'color 0.2s' }}
-                  onMouseEnter={e => e.currentTarget.style.color = 'white'}
-                  onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.55)'}
-                >
-                  {typeof link === 'string' ? link : link.label}
-                  {typeof link === 'object' && link.href.startsWith('http') && (
-                    <span style={{ fontSize: '0.65rem', marginLeft: '0.3rem', opacity: 0.5 }}>↗</span>
-                  )}
-                </a>
-              ))}
-            </div>
-          ))}
+          {/* Company */}
+          <div>
+            <p style={{ fontSize: '0.72rem', letterSpacing: '0.25em', textTransform: 'uppercase', color: '#f4a261', marginBottom: '1.2rem' }}>Company</p>
+            {companyLinks.map(link => (
+              <a key={link.label}
+                href={link.href}
+                target={link.href.startsWith('http') ? '_blank' : undefined}
+                rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+                style={{ display: 'block', fontSize: '0.82rem', color: 'rgba(255,255,255,0.55)', textDecoration: 'none', marginBottom: '0.6rem', transition: 'color 0.2s' }}
+                onMouseEnter={e => e.currentTarget.style.color = 'white'}
+                onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.55)'}
+              >
+                {link.label}
+                {link.href.startsWith('http') && (
+                  <span style={{ fontSize: '0.65rem', marginLeft: '0.3rem', opacity: 0.5 }}>↗</span>
+                )}
+              </a>
+            ))}
+          </div>
         </div>
 
         <div className="footer-bottom">

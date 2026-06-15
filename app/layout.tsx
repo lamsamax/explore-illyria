@@ -55,10 +55,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }
         `}</style>
       </head>
-      <body>
+      <body suppressHydrationWarning>
 
         {/* INTRO — Globe slika koja diše */}
-        <div id="intro-screen"
+        <div id="intro-screen" suppressHydrationWarning
           style={{
             position: 'fixed', inset: 0, zIndex: 9999,
             display: 'flex', flexDirection: 'column',

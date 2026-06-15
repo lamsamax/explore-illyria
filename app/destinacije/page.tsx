@@ -5,7 +5,11 @@ import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 import { Footer } from '@/components/sections/Footer';
+import { Navbar } from '@/components/layout/Navbar';
 import { supabase } from '@/lib/supabase';
+import { sendContact } from '@/lib/sendContact';
+
+type FormStatus = 'idle' | 'loading' | 'success' | 'error';
 
 
 type Tour = {
@@ -31,6 +35,13 @@ type Tour = {
 
 const CATEGORIES = ['All', 'Nature', 'History', 'Culture'];
 
+const CATEGORY_META: Record<string, { emoji: string; bg: string; activeBg: string }> = {
+  All:     { emoji: '🗺', bg: '#f0f0ec', activeBg: '#2d6a4f' },
+  Nature:  { emoji: '🏔', bg: '#e8f4e8', activeBg: '#2d6a4f' },
+  History: { emoji: '🏰', bg: '#f8ebe8', activeBg: '#c25b1a' },
+  Culture: { emoji: '🏛', bg: '#f0e8f8', activeBg: '#7c3aed' },
+};
+
 const DIFFICULTIES: Record<string, { color: string; bg: string }> = {
   'Easy':   { color: '#2d6a4f', bg: '#e8f4f0' },
   'Medium': { color: '#c25b1a', bg: '#f8f0e8' },
@@ -38,11 +49,20 @@ const DIFFICULTIES: Record<string, { color: string; bg: string }> = {
 };
 
 function ContactModal({ tour, onClose }: { tour: Tour; onClose: () => void }) {
-  const [submitted, setSubmitted] = useState(false);
+  const [status, setStatus] = useState<FormStatus>('idle');
+  const [errMsg, setErrMsg] = useState('');
   const [form, setForm] = useState({ name: '', email: '', phone: '', message: '' });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleSubmit = async () => {
+    if (!form.name || !form.email) { setErrMsg('Name and email are required.'); setStatus('error'); return; }
+    setStatus('loading'); setErrMsg('');
+    const res = await sendContact({ ...form, tour: tour.name, message: form.message || 'Interested in this tour.' });
+    if (res.ok) setStatus('success');
+    else { setStatus('error'); setErrMsg(res.error ?? 'Failed to send.'); }
   };
 
   return (
@@ -64,48 +84,38 @@ function ContactModal({ tour, onClose }: { tour: Tour; onClose: () => void }) {
           ×
         </button>
 
-        {!submitted ? (
-          <>
-            <p style={{ fontSize: '0.65rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#2d6a4f', fontFamily: 'Inter, sans-serif', marginBottom: '0.4rem' }}>Get in touch</p>
-            <h3 style={{ fontFamily: 'Lora, serif', fontSize: '1.4rem', fontWeight: 700, color: '#1a1a1a', marginBottom: '0.3rem' }}>{tour.name}</h3>
-            <p style={{ fontSize: '0.8rem', color: '#888', fontFamily: 'Inter, sans-serif', marginBottom: '1.5rem' }}>📍 {tour.location}</p>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.7rem' }}>
-              {(['name', 'email', 'phone'] as const).map(field => (
-                <input
-                  key={field}
-                  name={field}
-                  type={field === 'email' ? 'email' : 'text'}
-                  placeholder={field === 'name' ? 'Full name' : field === 'email' ? 'Email address' : 'Phone number'}
-                  value={form[field]}
-                  onChange={handleChange}
-                  style={{ border: '1px solid #e0e0e0', borderRadius: '10px', padding: '0.75rem 1rem', fontSize: '0.85rem', outline: 'none', fontFamily: 'Inter, sans-serif', color: '#1a1a1a', width: '100%', boxSizing: 'border-box' }}
-                />
-              ))}
-              <textarea
-                name="message"
-                placeholder="Write your message here — ask about dates, group size, or anything else..."
-                value={form.message}
-                onChange={handleChange}
-                rows={4}
-                style={{ border: '1px solid #e0e0e0', borderRadius: '10px', padding: '0.75rem 1rem', fontSize: '0.85rem', outline: 'none', fontFamily: 'Inter, sans-serif', color: '#1a1a1a', width: '100%', boxSizing: 'border-box', resize: 'vertical', lineHeight: 1.6 }}
-              />
-              <button
-                onClick={() => setSubmitted(true)}
-                style={{ background: '#2d6a4f', color: 'white', border: 'none', borderRadius: '12px', padding: '0.9rem', fontSize: '0.9rem', fontWeight: 700, cursor: 'pointer', fontFamily: 'Inter, sans-serif', transition: 'background 0.2s', marginTop: '0.2rem' }}
-                onMouseEnter={e => e.currentTarget.style.background = '#235a40'}
-                onMouseLeave={e => e.currentTarget.style.background = '#2d6a4f'}
-              >
-                Send message →
-              </button>
-            </div>
-          </>
-        ) : (
+        {status === 'success' ? (
           <div style={{ textAlign: 'center', padding: '1.5rem 0' }}>
             <p style={{ fontSize: '2.5rem', marginBottom: '0.8rem' }}>✅</p>
             <h3 style={{ fontFamily: 'Lora, serif', fontSize: '1.4rem', color: '#1a1a1a', marginBottom: '0.5rem' }}>Message sent!</h3>
             <p style={{ fontSize: '0.85rem', color: '#888', fontFamily: 'Inter, sans-serif' }}>We'll get back to you shortly.</p>
           </div>
+        ) : (
+          <>
+            <p style={{ fontSize: '0.65rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#2d6a4f', fontFamily: 'Inter, sans-serif', marginBottom: '0.4rem' }}>Get in touch</p>
+            <h3 style={{ fontFamily: 'Lora, serif', fontSize: '1.4rem', fontWeight: 700, color: '#1a1a1a', marginBottom: '0.3rem' }}>{tour.name}</h3>
+            <p style={{ fontSize: '0.8rem', color: '#888', fontFamily: 'Inter, sans-serif', marginBottom: '1.5rem' }}>📍 {tour.location}</p>
+            {/* Honeypot */}
+            <input name="website" type="text" defaultValue="" style={{ display: 'none' }} tabIndex={-1} aria-hidden="true" />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.7rem' }}>
+              {(['name', 'email', 'phone'] as const).map(field => (
+                <input key={field} name={field} type={field === 'email' ? 'email' : 'text'}
+                  placeholder={field === 'name' ? 'Full name' : field === 'email' ? 'Email address' : 'Phone number'}
+                  value={form[field]} onChange={handleChange}
+                  maxLength={field === 'email' ? 100 : field === 'phone' ? 30 : 100}
+                  style={{ border: '1px solid #e0e0e0', borderRadius: '10px', padding: '0.75rem 1rem', fontSize: '0.85rem', outline: 'none', fontFamily: 'Inter, sans-serif', color: '#1a1a1a', width: '100%', boxSizing: 'border-box' }} />
+              ))}
+              <textarea name="message" placeholder="Ask about dates, group size, or anything else..."
+                value={form.message} onChange={handleChange} rows={4}
+                maxLength={2000}
+                style={{ border: '1px solid #e0e0e0', borderRadius: '10px', padding: '0.75rem 1rem', fontSize: '0.85rem', outline: 'none', fontFamily: 'Inter, sans-serif', color: '#1a1a1a', width: '100%', boxSizing: 'border-box', resize: 'vertical', lineHeight: 1.6 }} />
+              {status === 'error' && <p style={{ fontSize: '0.8rem', color: '#c23a1a', margin: 0, fontFamily: 'Inter, sans-serif' }}>{errMsg}</p>}
+              <button onClick={handleSubmit} disabled={status === 'loading'}
+                style={{ background: '#2d6a4f', color: 'white', border: 'none', borderRadius: '12px', padding: '0.9rem', fontSize: '0.9rem', fontWeight: 700, cursor: status === 'loading' ? 'wait' : 'pointer', fontFamily: 'Inter, sans-serif', opacity: status === 'loading' ? 0.7 : 1, marginTop: '0.2rem' }}>
+                {status === 'loading' ? 'Sending...' : 'Send message →'}
+              </button>
+            </div>
+          </>
         )}
       </motion.div>
     </motion.div>
@@ -113,7 +123,25 @@ function ContactModal({ tour, onClose }: { tour: Tour; onClose: () => void }) {
 }
 
 function TourModal({ tour, onClose }: { tour: Tour; onClose: () => void }) {
-  const [submitted, setSubmitted] = useState(false);
+  const [bookStatus, setBookStatus] = useState<FormStatus>('idle');
+  const [bookErr, setBookErr] = useState('');
+  const [bookForm, setBookForm] = useState({ name: '', email: '', phone: '', people: '' });
+
+  const handleBookChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setBookForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleBook = async () => {
+    if (!bookForm.name || !bookForm.email) { setBookErr('Name and email are required.'); setBookStatus('error'); return; }
+    setBookStatus('loading'); setBookErr('');
+    const res = await sendContact({
+      name: bookForm.name, email: bookForm.email, phone: bookForm.phone,
+      tour: tour.name, people: bookForm.people,
+      message: `Booking request for ${tour.name}${bookForm.people ? ` — ${bookForm.people} people` : ''}.`,
+    });
+    if (res.ok) setBookStatus('success');
+    else { setBookStatus('error'); setBookErr(res.error ?? 'Failed to send.'); }
+  };
 
   return (
     <motion.div
@@ -136,7 +164,7 @@ function TourModal({ tour, onClose }: { tour: Tour; onClose: () => void }) {
         </button>
 
         {/* Hero */}
-        <div style={{ background: tour.color, padding: '2.5rem 2.5rem 2rem', borderRadius: '24px 24px 0 0', position: 'relative' }}>
+        <div className="tour-modal-hero" style={{ background: tour.color }}>
           <span style={{ background: tour.tagColor, color: 'white', fontSize: '0.65rem', fontWeight: 700, padding: '0.3rem 0.8rem', borderRadius: '999px', fontFamily: 'Inter, sans-serif', display: 'inline-block', marginBottom: '1rem' }}>
             {tour.tag}
           </span>
@@ -146,10 +174,10 @@ function TourModal({ tour, onClose }: { tour: Tour; onClose: () => void }) {
           <p style={{ fontSize: '0.82rem', color: '#666', fontFamily: 'Inter, sans-serif', margin: 0 }}>📍 {tour.location}</p>
         </div>
 
-        <div style={{ padding: '2rem 2.5rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+        <div className="tour-modal-body">
 
           {/* Meta */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.6rem' }}>
+          <div className="tour-modal-meta">
             {[
               { icon: '⏱', label: 'Duration', value: tour.duration },
               { icon: '🏃', label: 'Activity', value: tour.activity },
@@ -169,7 +197,7 @@ function TourModal({ tour, onClose }: { tour: Tour; onClose: () => void }) {
           </p>
 
           {/* Highlights + Included */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+          <div className="tour-modal-hl-grid">
             <div>
               <p style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#1a1a1a', marginBottom: '0.6rem', fontFamily: 'Inter, sans-serif' }}>Highlights</p>
               {tour.highlights.map((h, i) => (
@@ -197,7 +225,13 @@ function TourModal({ tour, onClose }: { tour: Tour; onClose: () => void }) {
 
           {/* Booking */}
           <div style={{ borderTop: '1px solid #eee', paddingTop: '1.5rem' }}>
-            {!submitted ? (
+            {bookStatus === 'success' ? (
+              <div style={{ textAlign: 'center', padding: '2rem 0' }}>
+                <p style={{ fontSize: '2.5rem', marginBottom: '0.8rem' }}>✅</p>
+                <h3 style={{ fontFamily: 'Lora, serif', fontSize: '1.4rem', color: '#1a1a1a', marginBottom: '0.5rem' }}>Request sent!</h3>
+                <p style={{ fontSize: '0.85rem', color: '#888', fontFamily: 'Inter, sans-serif' }}>Our team will contact you shortly to confirm your booking.</p>
+              </div>
+            ) : (
               <>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', marginBottom: '1.2rem' }}>
                   <span style={{ fontFamily: 'Lora, serif', fontSize: '1.8rem', fontWeight: 700, color: '#2d6a4f' }}>
@@ -205,37 +239,28 @@ function TourModal({ tour, onClose }: { tour: Tour; onClose: () => void }) {
                   </span>
                   {tour.price && <span style={{ fontSize: '0.75rem', color: '#888', fontFamily: 'Inter, sans-serif' }}>per person</span>}
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem', marginBottom: '0.6rem' }}>
-                  {['Full name', 'Email address', 'Phone number', 'Number of people'].map(field => (
-                    <input key={field} type="text" placeholder={field}
-                      style={{ border: '1px solid #e0e0e0', borderRadius: '10px', padding: '0.75rem 1rem', fontSize: '0.85rem', outline: 'none', fontFamily: 'Inter, sans-serif', color: '#1a1a1a' }} />
+                {/* Honeypot */}
+                <input name="website" type="text" defaultValue="" style={{ display: 'none' }} tabIndex={-1} aria-hidden="true" />
+                <div className="tour-modal-form-grid">
+                  {([['name','Full name'],['email','Email address'],['phone','Phone number'],['people','Number of people']] as const).map(([name, placeholder]) => (
+                    <input key={name} name={name} type={name === 'email' ? 'email' : 'text'} placeholder={placeholder}
+                      value={bookForm[name as keyof typeof bookForm]} onChange={handleBookChange}
+                      maxLength={name === 'email' ? 100 : name === 'people' ? 10 : name === 'phone' ? 30 : 100}
+                      style={{ border: '1px solid #e0e0e0', borderRadius: '10px', padding: '0.75rem 1rem', fontSize: '0.85rem', outline: 'none', fontFamily: 'Inter, sans-serif', color: '#1a1a1a', width: '100%', boxSizing: 'border-box' }} />
                   ))}
                 </div>
-                <div style={{ display: 'flex', gap: '0.8rem' }}>
-                  <button
-                    onClick={() => setSubmitted(true)}
-                    style={{ flex: 1, background: '#2d6a4f', color: 'white', border: 'none', borderRadius: '12px', padding: '0.9rem', fontSize: '0.9rem', fontWeight: 700, cursor: 'pointer', fontFamily: 'Inter, sans-serif', transition: 'all 0.2s' }}
-                    onMouseEnter={e => e.currentTarget.style.background = '#235a40'}
-                    onMouseLeave={e => e.currentTarget.style.background = '#2d6a4f'}
-                  >
-                    Send booking request →
+                {bookStatus === 'error' && <p style={{ fontSize: '0.8rem', color: '#c23a1a', margin: '0 0 0.6rem', fontFamily: 'Inter, sans-serif' }}>{bookErr}</p>}
+                <div style={{ display: 'flex', gap: '0.8rem', flexWrap: 'wrap' }}>
+                  <button onClick={handleBook} disabled={bookStatus === 'loading'}
+                    style={{ flex: 1, minWidth: '140px', background: '#2d6a4f', color: 'white', border: 'none', borderRadius: '12px', padding: '0.9rem', fontSize: '0.9rem', fontWeight: 700, cursor: bookStatus === 'loading' ? 'wait' : 'pointer', fontFamily: 'Inter, sans-serif', opacity: bookStatus === 'loading' ? 0.7 : 1 }}>
+                    {bookStatus === 'loading' ? 'Sending...' : 'Send booking request →'}
                   </button>
-                  
-                    <a href="mailto:explore.illyria.info@gmail.com"
-                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.9rem 1.5rem', borderRadius: '12px', border: '2px solid #2d6a4f', color: '#2d6a4f', textDecoration: 'none', fontSize: '0.85rem', fontWeight: 700, fontFamily: 'Inter, sans-serif', transition: 'all 0.2s', whiteSpace: 'nowrap' }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#2d6a4f'; (e.currentTarget as HTMLElement).style.color = 'white'; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = '#2d6a4f'; }}
-                  >
+                  <a href="mailto:explore.illyria.info@gmail.com"
+                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.9rem 1.5rem', borderRadius: '12px', border: '2px solid #2d6a4f', color: '#2d6a4f', textDecoration: 'none', fontSize: '0.85rem', fontWeight: 700, fontFamily: 'Inter, sans-serif', whiteSpace: 'nowrap' }}>
                     Contact us
                   </a>
                 </div>
               </>
-            ) : (
-              <div style={{ textAlign: 'center', padding: '2rem 0' }}>
-                <p style={{ fontSize: '2.5rem', marginBottom: '0.8rem' }}>✅</p>
-                <h3 style={{ fontFamily: 'Lora, serif', fontSize: '1.4rem', color: '#1a1a1a', marginBottom: '0.5rem' }}>Request sent!</h3>
-                <p style={{ fontSize: '0.85rem', color: '#888', fontFamily: 'Inter, sans-serif' }}>Our team will contact you shortly to confirm your booking.</p>
-              </div>
             )}
           </div>
         </div>
@@ -249,17 +274,11 @@ function DestinacijeContent() {
   const [search, setSearch] = useState('');
   const [tours, setTours] = useState<Tour[]>([]);
   const [loading, setLoading] = useState(true);
+  const [displayCount, setDisplayCount] = useState(12);
   const [selectedTour, setSelectedTour] = useState<Tour | null>(null);
   const [contactTour, setContactTour] = useState<Tour | null>(null);
-  const [scrolled, setScrolled] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true });
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 60);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
 
   useEffect(() => {
     supabase
@@ -297,7 +316,11 @@ function DestinacijeContent() {
   useEffect(() => {
     const cat = searchParams.get('category');
     if (cat && CATEGORIES.includes(cat)) setActive(cat);
+    const q = searchParams.get('q');
+    if (q) setSearch(q);
   }, [searchParams]);
+
+  useEffect(() => { setDisplayCount(12); }, [active, search]);
 
   const filtered = tours.filter(t => {
     const matchCat = active === 'All' || t.category === active;
@@ -306,53 +329,12 @@ function DestinacijeContent() {
       t.desc.toLowerCase().includes(search.toLowerCase());
     return matchCat && matchSearch;
   });
+  const visible = filtered.slice(0, displayCount);
 
   return (
     <div style={{ minHeight: '100vh', background: '#faf9f6', fontFamily: 'Inter, sans-serif' }}>
 
-      {/* Navbar */}
-      <nav style={{
-        position: 'fixed', zIndex: 100,
-        top: scrolled ? 0 : '1.5rem',
-        left: scrolled ? 0 : '50%',
-        transform: scrolled ? 'none' : 'translateX(-50%)',
-        width: scrolled ? '100%' : '94%',
-        maxWidth: scrolled ? '100%' : '1100px',
-        padding: scrolled ? '0.85rem 3rem' : '0.75rem 1.5rem',
-        borderRadius: scrolled ? 0 : '999px',
-        background: 'rgba(255,255,255,0.97)',
-        backdropFilter: 'blur(20px)',
-        borderBottom: scrolled ? '1px solid #eee' : 'none',
-        border: scrolled ? undefined : '1px solid rgba(0,0,0,0.08)',
-        boxShadow: scrolled ? '0 2px 16px rgba(0,0,0,0.07)' : '0 4px 24px rgba(0,0,0,0.08)',
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        transition: 'top 0.3s ease, left 0.3s ease, width 0.3s ease, border-radius 0.3s ease, padding 0.3s ease, box-shadow 0.3s ease',
-      }}>
-        <a href="/" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none' }}>
-          <svg width="26" height="26" viewBox="0 0 100 100" fill="none">
-            <circle cx="50" cy="50" r="48" stroke="#2d6a4f" strokeWidth="3" fill="none" opacity="0.4"/>
-            <path d="M50 10 Q60 30 70 50 Q60 70 50 90 Q40 70 30 50 Q40 30 50 10Z" fill="#2d6a4f" opacity="0.8"/>
-            <path d="M10 50 Q30 40 50 50 Q70 60 90 50" stroke="#f4a261" strokeWidth="3" fill="none" strokeLinecap="round"/>
-          </svg>
-          <span style={{ fontFamily: 'Lora, serif', fontSize: '1.1rem', color: '#1a1a1a', fontWeight: 500 }}>
-            Explore <em style={{ color: '#f4a261', fontStyle: 'normal', fontWeight: 700 }}>Illyria</em>
-          </span>
-        </a>
-        <div style={{ display: 'flex', gap: '2rem' }}>
-          {[
-            { label: 'Tours', href: '/destinacije' },
-            { label: 'Activities', href: '/#kategorije' },
-            { label: 'About', href: '/#zasto-mi' },
-            { label: 'Blog', href: '/#istaknute' },
-          ].map(link => (
-            <a key={link.label} href={link.href}
-              style={{ fontSize: '0.8rem', color: link.label === 'Tours' ? '#2d6a4f' : '#555', textDecoration: 'none', letterSpacing: '0.05em', fontWeight: link.label === 'Tours' ? 700 : 400 }}>
-              {link.label}
-            </a>
-          ))}
-        </div>
-        <a href="/" style={{ background: '#f4a261', color: 'white', borderRadius: '999px', padding: '0.55rem 1.3rem', fontSize: '0.8rem', fontWeight: 600, textDecoration: 'none' }}>Home</a>
-      </nav>
+      <Navbar variant="light" scrollTransform activePage="Tours" />
 
       {/* Hero — with background image */}
       <div style={{ position: 'relative', padding: '10rem 4rem 5rem', textAlign: 'center', overflow: 'hidden' }}>
@@ -379,20 +361,25 @@ function DestinacijeContent() {
       </div>
 
       {/* Filter */}
-      <div style={{ background: 'white', borderBottom: '1px solid #eee', padding: '1rem 4rem', position: 'sticky', top: scrolled ? '53px' : '5rem', zIndex: 50, display: 'flex', gap: '0.6rem', flexWrap: 'wrap', justifyContent: 'center', transition: 'top 0.3s ease' }}>
-        {CATEGORIES.map(cat => (
-          <button key={cat} onClick={() => setActive(cat)}
-            style={{ padding: '0.5rem 1.2rem', borderRadius: '999px', border: 'none', background: active === cat ? '#2d6a4f' : '#f0f0ec', color: active === cat ? 'white' : '#555', fontSize: '0.82rem', fontWeight: active === cat ? 700 : 400, cursor: 'pointer', transition: 'all 0.2s' }}>
-            {cat}
-            {active === cat && filtered.length > 0 && (
-              <span style={{ marginLeft: '0.4rem', background: 'rgba(255,255,255,0.3)', borderRadius: '999px', padding: '0.1rem 0.5rem', fontSize: '0.72rem' }}>{filtered.length}</span>
-            )}
-          </button>
-        ))}
+      <div style={{ background: 'white', borderBottom: '1px solid #eee', padding: '1rem clamp(1rem, 5vw, 4rem)', position: 'sticky', top: '53px', zIndex: 50, display: 'flex', gap: '0.75rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+        {CATEGORIES.map(cat => {
+          const meta = CATEGORY_META[cat];
+          const isActive = active === cat;
+          return (
+            <button key={cat} onClick={() => setActive(cat)}
+              style={{ padding: '0.7rem 1.2rem', borderRadius: '14px', border: isActive ? `2px solid ${meta.activeBg}` : '2px solid transparent', background: isActive ? meta.activeBg : meta.bg, color: isActive ? 'white' : '#555', fontSize: '0.82rem', fontWeight: isActive ? 700 : 500, cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '0.4rem', fontFamily: 'Inter, sans-serif' }}>
+              <span style={{ fontSize: '1.1rem' }}>{meta.emoji}</span>
+              {cat}
+              {isActive && filtered.length > 0 && (
+                <span style={{ background: 'rgba(255,255,255,0.3)', borderRadius: '999px', padding: '0.1rem 0.5rem', fontSize: '0.72rem' }}>{filtered.length}</span>
+              )}
+            </button>
+          );
+        })}
       </div>
 
       {/* Grid */}
-      <div ref={ref} style={{ padding: '3rem 4rem 6rem', maxWidth: '1300px', margin: '0 auto' }}>
+      <div ref={ref} style={{ padding: 'clamp(1.5rem, 4vw, 3rem) clamp(1rem, 4vw, 4rem) clamp(3rem, 6vw, 6rem)', maxWidth: '1300px', margin: '0 auto' }}>
         {loading ? (
           <div style={{ textAlign: 'center', padding: '5rem 0' }}>
             <div style={{ width: '40px', height: '40px', border: '3px solid #e0e0e0', borderTop: '3px solid #2d6a4f', borderRadius: '50%', margin: '0 auto 1rem', animation: 'spin 0.8s linear infinite' }} />
@@ -410,14 +397,16 @@ function DestinacijeContent() {
             </button>
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' }}>
-            {filtered.map((tour, i) => (
+          <>
+          <div className="tours-grid">
+            {visible.map((tour, i) => (
               <motion.div key={tour.id}
                 initial={{ opacity: 0, y: 24 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: i * 0.04 }}
                 style={{ background: 'white', borderRadius: '20px', overflow: 'hidden', boxShadow: '0 2px 16px rgba(0,0,0,0.06)', cursor: 'pointer', display: 'flex', flexDirection: 'column' }}
                 whileHover={{ y: -6, boxShadow: '0 16px 48px rgba(0,0,0,0.14)' }}
+                onClick={() => setSelectedTour(tour)}
               >
                 <div style={{ position: 'relative', height: '200px', overflow: 'hidden' }}>
                   <img src={tour.image} alt={tour.name}
@@ -460,7 +449,7 @@ function DestinacijeContent() {
                     </div>
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
                       <button
-                        onClick={() => setContactTour(tour)}
+                        onClick={e => { e.stopPropagation(); setContactTour(tour); }}
                         style={{ padding: '0.55rem 0.9rem', borderRadius: '10px', border: '2px solid #2d6a4f', color: '#2d6a4f', background: 'transparent', fontSize: '0.75rem', fontWeight: 600, fontFamily: 'Inter, sans-serif', transition: 'all 0.2s', whiteSpace: 'nowrap', cursor: 'pointer' }}
                         onMouseEnter={e => { e.currentTarget.style.background = '#2d6a4f'; e.currentTarget.style.color = 'white'; }}
                         onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#2d6a4f'; }}
@@ -468,7 +457,7 @@ function DestinacijeContent() {
                         Contact
                       </button>
                       <button
-                        onClick={() => setSelectedTour(tour)}
+                        onClick={e => { e.stopPropagation(); setSelectedTour(tour); }}
                         style={{ background: '#2d6a4f', color: 'white', border: 'none', borderRadius: '10px', padding: '0.55rem 1rem', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer', fontFamily: 'Inter, sans-serif', transition: 'all 0.2s', whiteSpace: 'nowrap' }}
                         onMouseEnter={e => e.currentTarget.style.background = '#235a40'}
                         onMouseLeave={e => e.currentTarget.style.background = '#2d6a4f'}
@@ -481,6 +470,19 @@ function DestinacijeContent() {
               </motion.div>
             ))}
           </div>
+          {displayCount < filtered.length && (
+            <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>
+              <button
+                onClick={() => setDisplayCount(c => c + 12)}
+                style={{ background: 'white', color: '#2d6a4f', border: '2px solid #2d6a4f', borderRadius: '999px', padding: '0.85rem 2.5rem', fontSize: '0.9rem', fontWeight: 700, cursor: 'pointer', fontFamily: 'Inter, sans-serif', transition: 'all 0.2s' }}
+                onMouseEnter={e => { e.currentTarget.style.background = '#2d6a4f'; e.currentTarget.style.color = 'white'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'white'; e.currentTarget.style.color = '#2d6a4f'; }}
+              >
+                Show more ({filtered.length - displayCount} remaining)
+              </button>
+            </div>
+          )}
+          </>
         )}
       </div>
 
