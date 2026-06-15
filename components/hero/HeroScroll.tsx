@@ -16,7 +16,7 @@ export function HeroScroll() {
   const searchRef = useRef<HTMLDivElement>(null);
 
   // Contact form state
-  const [form, setForm] = useState({ name: '', email: '', phone: '', message: '' });
+  const [form, setForm] = useState({ name: '', email: '', phone: '', message: '', date: '' });
   const [status, setStatus] = useState<Status>('idle');
   const [errMsg, setErrMsg] = useState('');
 
@@ -56,8 +56,8 @@ export function HeroScroll() {
   };
 
   const handleSubmit = async () => {
-    if (!form.name || !form.email || !form.message) {
-      setErrMsg('Please fill in name, email, and message.'); setStatus('error'); return;
+    if (!form.name || !form.email || !form.date) {
+      setErrMsg('Please fill in name, email, and tour date.'); setStatus('error'); return;
     }
     setStatus('loading'); setErrMsg('');
     const res = await sendContact({ ...form, message: form.message || 'Interested in planning a trip.' });
@@ -219,16 +219,24 @@ export function HeroScroll() {
                 <h3 style={{ fontFamily: 'Lora, serif', fontSize: '1.8rem', fontWeight: 600, marginBottom: '1.5rem', color: '#1a1a1a' }}>Plan your trip</h3>
                 {/* Honeypot */}
                 <input name="website" type="text" defaultValue="" style={{ display: 'none' }} tabIndex={-1} aria-hidden="true" />
+                <p style={{ fontSize: '0.72rem', color: '#999', fontFamily: 'Inter, sans-serif', margin: '-0.5rem 0 0' }}>Fields marked <span style={{ color: '#c23a1a' }}>*</span> are required</p>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-                  {(['name', 'email', 'phone'] as const).map(field => (
-                    <input key={field} name={field} type={field === 'email' ? 'email' : 'text'}
-                      placeholder={field === 'name' ? 'Full name' : field === 'email' ? 'Email address' : 'Phone number'}
-                      value={form[field]} onChange={handleChange}
+                  {([['name', 'Full name *', 'text'], ['email', 'Email address *', 'email'], ['phone', 'Phone number', 'text']] as const).map(([field, placeholder, type]) => (
+                    <input key={field} name={field} type={type}
+                      placeholder={placeholder}
+                      value={form[field as keyof typeof form] as string} onChange={handleChange}
+                      maxLength={field === 'email' ? 100 : field === 'phone' ? 30 : 100}
                       style={{ width: '100%', border: '1px solid #e0e0e0', borderRadius: '12px', padding: '0.85rem 1rem', fontSize: '0.9rem', outline: 'none', fontFamily: 'Inter, sans-serif', color: '#1a1a1a', boxSizing: 'border-box' }} />
                   ))}
+                  <input name="date" type="date"
+                    placeholder="Tour date *"
+                    value={(form as any).date ?? ''} onChange={handleChange}
+                    min={new Date().toISOString().split('T')[0]}
+                    style={{ width: '100%', border: '1px solid #e0e0e0', borderRadius: '12px', padding: '0.85rem 1rem', fontSize: '0.9rem', outline: 'none', fontFamily: 'Inter, sans-serif', color: (form as any).date ? '#1a1a1a' : '#aaa', boxSizing: 'border-box' }} />
                   <input name="message" type="text"
                     placeholder="Desired destination / message"
                     value={form.message} onChange={handleChange}
+                    maxLength={2000}
                     style={{ width: '100%', border: '1px solid #e0e0e0', borderRadius: '12px', padding: '0.85rem 1rem', fontSize: '0.9rem', outline: 'none', fontFamily: 'Inter, sans-serif', color: '#1a1a1a', boxSizing: 'border-box' }} />
                   {status === 'error' && (
                     <p style={{ fontSize: '0.8rem', color: '#c23a1a', fontFamily: 'Inter, sans-serif', margin: 0 }}>{errMsg}</p>

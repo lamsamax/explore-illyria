@@ -30,17 +30,17 @@ type BookStatus = 'idle' | 'loading' | 'success' | 'error';
 function DestModal({ dest, onClose }: { dest: Tour; onClose: () => void }) {
   const [status, setStatus] = useState<BookStatus>('idle');
   const [errMsg, setErrMsg] = useState('');
-  const [form, setForm] = useState({ name: '', email: '', phone: '', people: '' });
+  const [form, setForm] = useState({ name: '', email: '', phone: '', people: '', date: '' });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleBook = async () => {
-    if (!form.name || !form.email) { setErrMsg('Name and email are required.'); setStatus('error'); return; }
+    if (!form.name || !form.email || !form.date) { setErrMsg('Name, email and tour date are required.'); setStatus('error'); return; }
     setStatus('loading'); setErrMsg('');
     const res = await sendContact({
-      name: form.name, email: form.email, phone: form.phone, people: form.people,
+      name: form.name, email: form.email, phone: form.phone, people: form.people, date: form.date,
       tour: dest.name,
       message: `Booking request for ${dest.name}${form.people ? ` — ${form.people} people` : ''}.`,
     });
@@ -145,15 +145,21 @@ function DestModal({ dest, onClose }: { dest: Tour; onClose: () => void }) {
                   </span>
                   {dest.price && <span style={{ fontSize: '0.75rem', color: '#888', fontFamily: 'Inter, sans-serif' }}>per person</span>}
                 </div>
+                <p style={{ fontSize: '0.72rem', color: '#999', fontFamily: 'Inter, sans-serif', marginBottom: '0.2rem' }}>Fields marked <span style={{ color: '#c23a1a' }}>*</span> are required</p>
                 {/* Honeypot */}
                 <input name="website" type="text" defaultValue="" style={{ display: 'none' }} tabIndex={-1} aria-hidden="true" />
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-                  {([['name','Full name'],['email','Email address'],['phone','Phone number'],['people','Number of people']] as const).map(([name, placeholder]) => (
+                  {([['name','Full name *'],['email','Email address *'],['phone','Phone number'],['people','Number of people']] as const).map(([name, placeholder]) => (
                     <input key={name} name={name} type={name === 'email' ? 'email' : 'text'} placeholder={placeholder}
-                      value={form[name]} onChange={handleChange}
+                      value={form[name as keyof typeof form]} onChange={handleChange}
                       maxLength={name === 'email' ? 100 : name === 'people' ? 10 : name === 'phone' ? 30 : 100}
                       style={{ width: '100%', border: '1px solid #e0e0e0', borderRadius: '10px', padding: '0.75rem 1rem', fontSize: '0.85rem', outline: 'none', fontFamily: 'Inter, sans-serif', color: '#1a1a1a', boxSizing: 'border-box' }} />
                   ))}
+                  <input name="date" type="date"
+                    value={form.date} onChange={handleChange}
+                    min={new Date().toISOString().split('T')[0]}
+                    style={{ width: '100%', border: '1px solid #c23a1a', borderRadius: '10px', padding: '0.75rem 1rem', fontSize: '0.85rem', outline: 'none', fontFamily: 'Inter, sans-serif', color: form.date ? '#1a1a1a' : '#aaa', boxSizing: 'border-box' }} />
+                  <p style={{ fontSize: '0.72rem', color: '#c23a1a', margin: '-0.2rem 0 0', fontFamily: 'Inter, sans-serif' }}>* Tour date required</p>
                   {status === 'error' && <p style={{ fontSize: '0.8rem', color: '#c23a1a', margin: 0, fontFamily: 'Inter, sans-serif' }}>{errMsg}</p>}
                   <button onClick={handleBook} disabled={status === 'loading'}
                     style={{ background: '#2d6a4f', color: 'white', border: 'none', borderRadius: '12px', padding: '0.9rem', fontSize: '0.9rem', fontWeight: 700, cursor: status === 'loading' ? 'wait' : 'pointer', fontFamily: 'Inter, sans-serif', marginTop: '0.2rem', opacity: status === 'loading' ? 0.7 : 1 }}>

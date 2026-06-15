@@ -55,6 +55,7 @@ export async function POST(req: NextRequest) {
   const message = body.message?.trim() ?? '';
   const tour = body.tour?.trim() ?? '';
   const people = body.people?.trim() ?? '';
+  const date = body.date?.trim() ?? '';
 
   if (!name || !email || !message) {
     return NextResponse.json(
@@ -99,6 +100,7 @@ export async function POST(req: NextRequest) {
           <tr><td style="padding:8px 4px;color:#888;font-size:0.85rem">Phone</td><td style="padding:8px 4px">${escapeHtml(phone) || '—'}</td></tr>
           ${tour ? `<tr style="background:#f8f8f5"><td style="padding:8px 4px;color:#888;font-size:0.85rem">Tour</td><td style="padding:8px 4px;font-weight:600;color:#2d6a4f">${escapeHtml(tour)}</td></tr>` : ''}
           ${people ? `<tr><td style="padding:8px 4px;color:#888;font-size:0.85rem">People</td><td style="padding:8px 4px">${escapeHtml(people)}</td></tr>` : ''}
+          ${date ? `<tr style="background:#f8f8f5"><td style="padding:8px 4px;color:#888;font-size:0.85rem">Tour date</td><td style="padding:8px 4px;font-weight:600">${escapeHtml(date)}</td></tr>` : ''}
           <tr ${tour || people ? '' : 'style="background:#f8f8f5"'}><td style="padding:8px 4px;color:#888;font-size:0.85rem;vertical-align:top">Message</td><td style="padding:8px 4px;line-height:1.6;white-space:pre-wrap">${escapeHtml(message)}</td></tr>
         </table>
         <p style="margin-top:1.5rem;font-size:0.75rem;color:#bbb;border-top:1px solid #eee;padding-top:1rem">

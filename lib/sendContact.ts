@@ -5,6 +5,7 @@ export interface ContactPayload {
   message: string;
   tour?: string;
   people?: string;
+  date?: string;
 }
 
 export async function sendContact(

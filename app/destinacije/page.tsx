@@ -51,14 +51,14 @@ const DIFFICULTIES: Record<string, { color: string; bg: string }> = {
 function ContactModal({ tour, onClose }: { tour: Tour; onClose: () => void }) {
   const [status, setStatus] = useState<FormStatus>('idle');
   const [errMsg, setErrMsg] = useState('');
-  const [form, setForm] = useState({ name: '', email: '', phone: '', message: '' });
+  const [form, setForm] = useState({ name: '', email: '', phone: '', message: '', date: '' });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = async () => {
-    if (!form.name || !form.email) { setErrMsg('Name and email are required.'); setStatus('error'); return; }
+    if (!form.name || !form.email || !form.date) { setErrMsg('Name, email and tour date are required.'); setStatus('error'); return; }
     setStatus('loading'); setErrMsg('');
     const res = await sendContact({ ...form, tour: tour.name, message: form.message || 'Interested in this tour.' });
     if (res.ok) setStatus('success');
@@ -95,18 +95,24 @@ function ContactModal({ tour, onClose }: { tour: Tour; onClose: () => void }) {
             <p style={{ fontSize: '0.65rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#2d6a4f', fontFamily: 'Inter, sans-serif', marginBottom: '0.4rem' }}>Get in touch</p>
             <h3 style={{ fontFamily: 'Lora, serif', fontSize: '1.4rem', fontWeight: 700, color: '#1a1a1a', marginBottom: '0.3rem' }}>{tour.name}</h3>
             <p style={{ fontSize: '0.8rem', color: '#888', fontFamily: 'Inter, sans-serif', marginBottom: '1.5rem' }}>📍 {tour.location}</p>
+            <p style={{ fontSize: '0.72rem', color: '#999', fontFamily: 'Inter, sans-serif', marginBottom: '0.5rem' }}>Fields marked <span style={{ color: '#c23a1a' }}>*</span> are required</p>
             {/* Honeypot */}
             <input name="website" type="text" defaultValue="" style={{ display: 'none' }} tabIndex={-1} aria-hidden="true" />
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.7rem' }}>
-              {(['name', 'email', 'phone'] as const).map(field => (
-                <input key={field} name={field} type={field === 'email' ? 'email' : 'text'}
-                  placeholder={field === 'name' ? 'Full name' : field === 'email' ? 'Email address' : 'Phone number'}
-                  value={form[field]} onChange={handleChange}
+              {([['name', 'Full name *', 'text'], ['email', 'Email address *', 'email'], ['phone', 'Phone number', 'text']] as const).map(([field, placeholder, type]) => (
+                <input key={field} name={field} type={type}
+                  placeholder={placeholder}
+                  value={form[field as keyof typeof form]} onChange={handleChange}
                   maxLength={field === 'email' ? 100 : field === 'phone' ? 30 : 100}
                   style={{ border: '1px solid #e0e0e0', borderRadius: '10px', padding: '0.75rem 1rem', fontSize: '0.85rem', outline: 'none', fontFamily: 'Inter, sans-serif', color: '#1a1a1a', width: '100%', boxSizing: 'border-box' }} />
               ))}
-              <textarea name="message" placeholder="Ask about dates, group size, or anything else..."
-                value={form.message} onChange={handleChange} rows={4}
+              <input name="date" type="date"
+                value={form.date} onChange={handleChange}
+                min={new Date().toISOString().split('T')[0]}
+                style={{ border: '1px solid #e0e0e0', borderRadius: '10px', padding: '0.75rem 1rem', fontSize: '0.85rem', outline: 'none', fontFamily: 'Inter, sans-serif', color: form.date ? '#1a1a1a' : '#aaa', width: '100%', boxSizing: 'border-box' }} />
+              <p style={{ fontSize: '0.72rem', color: '#c23a1a', margin: '-0.3rem 0 0', fontFamily: 'Inter, sans-serif' }}>* Tour date required</p>
+              <textarea name="message" placeholder="Ask about group size, pickup, or anything else..."
+                value={form.message} onChange={handleChange} rows={3}
                 maxLength={2000}
                 style={{ border: '1px solid #e0e0e0', borderRadius: '10px', padding: '0.75rem 1rem', fontSize: '0.85rem', outline: 'none', fontFamily: 'Inter, sans-serif', color: '#1a1a1a', width: '100%', boxSizing: 'border-box', resize: 'vertical', lineHeight: 1.6 }} />
               {status === 'error' && <p style={{ fontSize: '0.8rem', color: '#c23a1a', margin: 0, fontFamily: 'Inter, sans-serif' }}>{errMsg}</p>}
@@ -125,18 +131,18 @@ function ContactModal({ tour, onClose }: { tour: Tour; onClose: () => void }) {
 function TourModal({ tour, onClose }: { tour: Tour; onClose: () => void }) {
   const [bookStatus, setBookStatus] = useState<FormStatus>('idle');
   const [bookErr, setBookErr] = useState('');
-  const [bookForm, setBookForm] = useState({ name: '', email: '', phone: '', people: '' });
+  const [bookForm, setBookForm] = useState({ name: '', email: '', phone: '', people: '', date: '' });
 
   const handleBookChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setBookForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleBook = async () => {
-    if (!bookForm.name || !bookForm.email) { setBookErr('Name and email are required.'); setBookStatus('error'); return; }
+    if (!bookForm.name || !bookForm.email || !bookForm.date) { setBookErr('Name, email and tour date are required.'); setBookStatus('error'); return; }
     setBookStatus('loading'); setBookErr('');
     const res = await sendContact({
       name: bookForm.name, email: bookForm.email, phone: bookForm.phone,
-      tour: tour.name, people: bookForm.people,
+      tour: tour.name, people: bookForm.people, date: bookForm.date,
       message: `Booking request for ${tour.name}${bookForm.people ? ` — ${bookForm.people} people` : ''}.`,
     });
     if (res.ok) setBookStatus('success');
@@ -239,16 +245,22 @@ function TourModal({ tour, onClose }: { tour: Tour; onClose: () => void }) {
                   </span>
                   {tour.price && <span style={{ fontSize: '0.75rem', color: '#888', fontFamily: 'Inter, sans-serif' }}>per person</span>}
                 </div>
+                <p style={{ fontSize: '0.72rem', color: '#999', fontFamily: 'Inter, sans-serif', marginBottom: '0.4rem' }}>Fields marked <span style={{ color: '#c23a1a' }}>*</span> are required</p>
                 {/* Honeypot */}
                 <input name="website" type="text" defaultValue="" style={{ display: 'none' }} tabIndex={-1} aria-hidden="true" />
                 <div className="tour-modal-form-grid">
-                  {([['name','Full name'],['email','Email address'],['phone','Phone number'],['people','Number of people']] as const).map(([name, placeholder]) => (
+                  {([['name','Full name *'],['email','Email address *'],['phone','Phone number'],['people','Number of people']] as const).map(([name, placeholder]) => (
                     <input key={name} name={name} type={name === 'email' ? 'email' : 'text'} placeholder={placeholder}
                       value={bookForm[name as keyof typeof bookForm]} onChange={handleBookChange}
                       maxLength={name === 'email' ? 100 : name === 'people' ? 10 : name === 'phone' ? 30 : 100}
                       style={{ border: '1px solid #e0e0e0', borderRadius: '10px', padding: '0.75rem 1rem', fontSize: '0.85rem', outline: 'none', fontFamily: 'Inter, sans-serif', color: '#1a1a1a', width: '100%', boxSizing: 'border-box' }} />
                   ))}
                 </div>
+                <input name="date" type="date"
+                  value={bookForm.date} onChange={handleBookChange}
+                  min={new Date().toISOString().split('T')[0]}
+                  style={{ border: '1px solid #c23a1a', borderRadius: '10px', padding: '0.75rem 1rem', fontSize: '0.85rem', outline: 'none', fontFamily: 'Inter, sans-serif', color: bookForm.date ? '#1a1a1a' : '#aaa', width: '100%', boxSizing: 'border-box', marginBottom: '0.2rem' }} />
+                <p style={{ fontSize: '0.72rem', color: '#c23a1a', margin: '0 0 0.4rem', fontFamily: 'Inter, sans-serif' }}>* Tour date required</p>
                 {bookStatus === 'error' && <p style={{ fontSize: '0.8rem', color: '#c23a1a', margin: '0 0 0.6rem', fontFamily: 'Inter, sans-serif' }}>{bookErr}</p>}
                 <div style={{ display: 'flex', gap: '0.8rem', flexWrap: 'wrap' }}>
                   <button onClick={handleBook} disabled={bookStatus === 'loading'}
