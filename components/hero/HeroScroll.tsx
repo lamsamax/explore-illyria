@@ -114,14 +114,16 @@ export function HeroScroll() {
                 <button onClick={() => { setSearch(''); setShowResults(false); }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#888', fontSize: '1.2rem', lineHeight: 1, flexShrink: 0 }}>×</button>
               )}
               <a href={`/destinacije${search.trim() ? `?q=${encodeURIComponent(search.trim())}` : ''}`}
-                style={{ background: '#2d6a4f', color: 'white', border: 'none', borderRadius: '999px', padding: '0.75rem 1.5rem', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap', fontFamily: 'Inter, sans-serif', flexShrink: 0, textDecoration: 'none' }}>
-                Search →
+                style={{ background: '#2d6a4f', color: 'white', border: 'none', borderRadius: '999px', width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, textDecoration: 'none' }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
               </a>
             </div>
 
             {/* Inline results dropdown */}
             {showResults && results.length > 0 && (
-              <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: 'white', borderRadius: '0 0 18px 18px', boxShadow: '0 20px 60px rgba(0,0,0,0.3)', overflow: 'hidden', zIndex: 10 }}>
+              <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: 'white', borderRadius: '0 0 18px 18px', boxShadow: '0 20px 60px rgba(0,0,0,0.3)', overflow: 'hidden', zIndex: 10, maxHeight: '280px', overflowY: 'auto' }}>
                 {results.map(tour => (
                   <a
                     key={tour.id}
