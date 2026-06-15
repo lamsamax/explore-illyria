@@ -168,6 +168,56 @@ html {
   .featured-img-side { min-height: 520px; }
 }
 
+/* TourModal responsive grids */
+.tour-modal-hero {
+  padding: clamp(1.25rem, 5vw, 2.5rem) clamp(1.25rem, 5vw, 2.5rem) 1.5rem;
+  border-radius: 24px 24px 0 0;
+  position: relative;
+}
+.tour-modal-body {
+  padding: clamp(1.25rem, 4vw, 2rem) clamp(1.25rem, 4vw, 2.5rem);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.tour-modal-meta {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.6rem;
+}
+@media (min-width: 520px) {
+  .tour-modal-meta { grid-template-columns: repeat(4, 1fr); }
+}
+.tour-modal-hl-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+@media (min-width: 560px) {
+  .tour-modal-hl-grid { grid-template-columns: 1fr 1fr; }
+}
+.tour-modal-form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.6rem;
+  margin-bottom: 0.6rem;
+}
+@media (min-width: 480px) {
+  .tour-modal-form-grid { grid-template-columns: 1fr 1fr; }
+}
+
+.tours-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.2rem;
+}
+@media (min-width: 560px) {
+  .tours-grid { grid-template-columns: repeat(2, 1fr); gap: 1.4rem; }
+}
+@media (min-width: 1024px) {
+  .tours-grid { grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+}
+
 .footer-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -176,6 +226,16 @@ html {
 }
 @media (min-width: 768px) {
   .footer-grid { grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; margin-bottom: 3rem; }
+}
+
+.footer-grid-new {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+@media (min-width: 768px) {
+  .footer-grid-new { grid-template-columns: 2fr 1fr; gap: 4rem; margin-bottom: 3rem; }
 }
 
 .footer-bottom {
@@ -189,8 +249,30 @@ html {
   .footer-bottom { flex-direction: row; justify-content: space-between; align-items: center; }
 }
 
-/* Show book-now button on touch devices (no hover) */
+/* Show book-now button on touch devices (no hover) — subtle top-right corner */
 @media (hover: none) {
-  .dest-card .dest-overlay { opacity: 1 !important; }
-  .dest-card .dest-overlay button { transform: translateY(0) !important; }
+  .dest-card .dest-overlay {
+    opacity: 1 !important;
+    background: transparent !important;
+    align-items: flex-start !important;
+    justify-content: flex-end !important;
+    padding: 0.8rem !important;
+  }
+  .dest-card .dest-overlay button {
+    transform: none !important;
+    padding: 0.35rem 0.85rem !important;
+    font-size: 0.72rem !important;
+    background: rgba(255,255,255,0.88) !important;
+    color: #1a1a1a !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.25) !important;
+    backdrop-filter: blur(6px);
+  }
+}
+
+/* Hamburger: mobile only. nav-cta-btn: desktop only. */
+.hamburger-btn { display: flex; flex-direction: column; gap: 5px; }
+.nav-cta-btn   { display: none; }
+@media (min-width: 768px) {
+  .hamburger-btn { display: none !important; }
+  .nav-cta-btn   { display: inline-flex; align-items: center; }
 }
