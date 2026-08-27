@@ -1,29 +1,9 @@
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState } from 'react';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
-import { supabase } from '@/lib/supabase';
+import { TOURS, type Tour } from '@/lib/tours';
 import { sendContact } from '@/lib/sendContact';
-
-type Tour = {
-  id: number;
-  name: string;
-  location: string;
-  price: number | null;
-  price_label: string;
-  tag: string;
-  tag_color: string;
-  color: string;
-  description: string;
-  image: string;
-  duration: string;
-  activity: string;
-  difficulty: string;
-  highlights: string[];
-  included: string[];
-  not_included: string[];
-  long_desc: string;
-};
 
 type BookStatus = 'idle' | 'loading' | 'success' | 'error';
 
@@ -134,8 +114,8 @@ function DestModal({ dest, onClose }: { dest: Tour; onClose: () => void }) {
             {status === 'success' ? (
               <div style={{ textAlign: 'center', padding: '1.5rem 0' }}>
                 <p style={{ fontSize: '2.5rem', marginBottom: '0.8rem' }}>✅</p>
-                <h3 style={{ fontFamily: 'Lora, serif', fontSize: '1.4rem', color: '#1a1a1a', marginBottom: '0.5rem' }}>Request sent!</h3>
-                <p style={{ fontSize: '0.85rem', color: '#888', fontFamily: 'Inter, sans-serif' }}>Our team will contact you shortly.</p>
+                <h3 style={{ fontFamily: 'Lora, serif', fontSize: '1.4rem', color: '#1a1a1a', marginBottom: '0.5rem' }}>WhatsApp opened!</h3>
+                <p style={{ fontSize: '0.85rem', color: '#888', fontFamily: 'Inter, sans-serif' }}>Just hit send in WhatsApp to confirm your booking.</p>
               </div>
             ) : (
               <>
@@ -146,8 +126,6 @@ function DestModal({ dest, onClose }: { dest: Tour; onClose: () => void }) {
                   {dest.price && <span style={{ fontSize: '0.75rem', color: '#888', fontFamily: 'Inter, sans-serif' }}>per person</span>}
                 </div>
                 <p style={{ fontSize: '0.72rem', color: '#999', fontFamily: 'Inter, sans-serif', marginBottom: '0.2rem' }}>Fields marked <span style={{ color: '#c23a1a' }}>*</span> are required</p>
-                {/* Honeypot */}
-                <input name="website" type="text" defaultValue="" style={{ display: 'none' }} tabIndex={-1} aria-hidden="true" />
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
                   {([['name','Full name *'],['email','Email address *'],['phone','Phone number'],['people','Number of people']] as const).map(([name, placeholder]) => (
                     <input key={name} name={name} type={name === 'email' ? 'email' : 'text'} placeholder={placeholder}
@@ -163,7 +141,7 @@ function DestModal({ dest, onClose }: { dest: Tour; onClose: () => void }) {
                   {status === 'error' && <p style={{ fontSize: '0.8rem', color: '#c23a1a', margin: 0, fontFamily: 'Inter, sans-serif' }}>{errMsg}</p>}
                   <button onClick={handleBook} disabled={status === 'loading'}
                     style={{ background: '#2d6a4f', color: 'white', border: 'none', borderRadius: '12px', padding: '0.9rem', fontSize: '0.9rem', fontWeight: 700, cursor: status === 'loading' ? 'wait' : 'pointer', fontFamily: 'Inter, sans-serif', marginTop: '0.2rem', opacity: status === 'loading' ? 0.7 : 1 }}>
-                    {status === 'loading' ? 'Sending...' : 'Send booking request →'}
+                    {status === 'loading' ? 'Opening...' : 'Book via WhatsApp →'}
                   </button>
                 </div>
               </>
@@ -179,20 +157,7 @@ export function Destinations() {
   const ref = useRef<HTMLElement>(null);
   const inView = useInView(ref, { once: true, margin: '-8%' });
   const [selected, setSelected] = useState<Tour | null>(null);
-  const [tours, setTours] = useState<Tour[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    supabase
-      .from('tours')
-      .select('id,name,location,price,price_label,tag,tag_color,color,description,image,duration,activity,difficulty,highlights,included,not_included,long_desc')
-      .order('id')
-      .limit(6)
-      .then(({ data }) => {
-        if (data) setTours(data as Tour[]);
-        setLoading(false);
-      });
-  }, []);
+  const tours = TOURS.slice(0, 6);
 
   return (
     <>
@@ -216,12 +181,7 @@ export function Destinations() {
           </div>
         </motion.div>
 
-        {loading ? (
-          <div style={{ textAlign: 'center', padding: '3rem 0' }}>
-            <div style={{ width: '36px', height: '36px', border: '3px solid #e0e0e0', borderTop: '3px solid #2d6a4f', borderRadius: '50%', margin: '0 auto', animation: 'spin 0.8s linear infinite' }} />
-            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-          </div>
-        ) : inView && tours.length > 0 ? (
+        {inView && tours.length > 0 ? (
           <div className="destinations-grid">
             {tours.map((dest, i) => (
               <motion.div

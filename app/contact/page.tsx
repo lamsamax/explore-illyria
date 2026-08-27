@@ -44,16 +44,14 @@ export default function ContactPage() {
           {status === 'success' ? (
             <div style={{ textAlign: 'center', padding: '2rem 0' }}>
               <p style={{ fontSize: '3rem', marginBottom: '1rem' }}>✅</p>
-              <h3 style={{ fontFamily: 'Lora, serif', fontSize: '1.6rem', color: '#1a1a1a', marginBottom: '0.5rem' }}>Message sent!</h3>
-              <p style={{ fontSize: '0.9rem', color: '#888' }}>We'll get back to you within 24 hours.</p>
+              <h3 style={{ fontFamily: 'Lora, serif', fontSize: '1.6rem', color: '#1a1a1a', marginBottom: '0.5rem' }}>WhatsApp opened!</h3>
+              <p style={{ fontSize: '0.9rem', color: '#888' }}>Just hit send in WhatsApp to reach us.</p>
             </div>
           ) : (
             <>
               <h2 style={{ fontFamily: 'Lora, serif', fontSize: '1.6rem', color: '#1a1a1a', marginBottom: '0.5rem' }}>Send us a message</h2>
-              <p style={{ fontSize: '0.85rem', color: '#888', marginBottom: '0.5rem' }}>We'll get back to you within 24 hours.</p>
+              <p style={{ fontSize: '0.85rem', color: '#888', marginBottom: '0.5rem' }}>We'll open WhatsApp with your message ready to send.</p>
               <p style={{ fontSize: '0.75rem', color: '#999', fontFamily: 'Inter, sans-serif', marginBottom: '1.2rem' }}>Fields marked <span style={{ color: '#c23a1a' }}>*</span> are required</p>
-              {/* Honeypot */}
-              <input name="website" type="text" defaultValue="" style={{ display: 'none' }} tabIndex={-1} aria-hidden="true" />
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
                 {([['name', 'Full name *', 'text'], ['email', 'Email address *', 'email'], ['phone', 'Phone number', 'text']] as const).map(([field, placeholder, type]) => (
                   <input key={field} name={field} type={type}
@@ -77,7 +75,7 @@ export default function ContactPage() {
                 )}
                 <button onClick={handleSubmit} disabled={status === 'loading'}
                   style={{ background: '#2d6a4f', color: 'white', border: 'none', borderRadius: '12px', padding: '1rem', fontSize: '0.9rem', fontWeight: 700, cursor: status === 'loading' ? 'wait' : 'pointer', fontFamily: 'Inter, sans-serif', opacity: status === 'loading' ? 0.7 : 1, marginTop: '0.2rem' }}>
-                  {status === 'loading' ? 'Sending...' : 'Send message →'}
+                  {status === 'loading' ? 'Opening...' : 'Message us on WhatsApp →'}
                 </button>
               </div>
               <div style={{ marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid #f0f0ec' }}>

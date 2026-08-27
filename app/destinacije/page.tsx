@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 import { Footer } from '@/components/sections/Footer';
 import { Navbar } from '@/components/layout/Navbar';
-import { supabase } from '@/lib/supabase';
+import { TOURS } from '@/lib/tours';
 import { sendContact } from '@/lib/sendContact';
 
 type FormStatus = 'idle' | 'loading' | 'success' | 'error';
@@ -87,8 +87,8 @@ function ContactModal({ tour, onClose }: { tour: Tour; onClose: () => void }) {
         {status === 'success' ? (
           <div style={{ textAlign: 'center', padding: '1.5rem 0' }}>
             <p style={{ fontSize: '2.5rem', marginBottom: '0.8rem' }}>✅</p>
-            <h3 style={{ fontFamily: 'Lora, serif', fontSize: '1.4rem', color: '#1a1a1a', marginBottom: '0.5rem' }}>Message sent!</h3>
-            <p style={{ fontSize: '0.85rem', color: '#888', fontFamily: 'Inter, sans-serif' }}>We'll get back to you shortly.</p>
+            <h3 style={{ fontFamily: 'Lora, serif', fontSize: '1.4rem', color: '#1a1a1a', marginBottom: '0.5rem' }}>WhatsApp opened!</h3>
+            <p style={{ fontSize: '0.85rem', color: '#888', fontFamily: 'Inter, sans-serif' }}>Just hit send in WhatsApp to reach us.</p>
           </div>
         ) : (
           <>
@@ -96,8 +96,6 @@ function ContactModal({ tour, onClose }: { tour: Tour; onClose: () => void }) {
             <h3 style={{ fontFamily: 'Lora, serif', fontSize: '1.4rem', fontWeight: 700, color: '#1a1a1a', marginBottom: '0.3rem' }}>{tour.name}</h3>
             <p style={{ fontSize: '0.8rem', color: '#888', fontFamily: 'Inter, sans-serif', marginBottom: '1.5rem' }}>📍 {tour.location}</p>
             <p style={{ fontSize: '0.72rem', color: '#999', fontFamily: 'Inter, sans-serif', marginBottom: '0.5rem' }}>Fields marked <span style={{ color: '#c23a1a' }}>*</span> are required</p>
-            {/* Honeypot */}
-            <input name="website" type="text" defaultValue="" style={{ display: 'none' }} tabIndex={-1} aria-hidden="true" />
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.7rem' }}>
               {([['name', 'Full name *', 'text'], ['email', 'Email address *', 'email'], ['phone', 'Phone number', 'text']] as const).map(([field, placeholder, type]) => (
                 <input key={field} name={field} type={type}
@@ -118,7 +116,7 @@ function ContactModal({ tour, onClose }: { tour: Tour; onClose: () => void }) {
               {status === 'error' && <p style={{ fontSize: '0.8rem', color: '#c23a1a', margin: 0, fontFamily: 'Inter, sans-serif' }}>{errMsg}</p>}
               <button onClick={handleSubmit} disabled={status === 'loading'}
                 style={{ background: '#2d6a4f', color: 'white', border: 'none', borderRadius: '12px', padding: '0.9rem', fontSize: '0.9rem', fontWeight: 700, cursor: status === 'loading' ? 'wait' : 'pointer', fontFamily: 'Inter, sans-serif', opacity: status === 'loading' ? 0.7 : 1, marginTop: '0.2rem' }}>
-                {status === 'loading' ? 'Sending...' : 'Send message →'}
+                {status === 'loading' ? 'Opening...' : 'Message us on WhatsApp →'}
               </button>
             </div>
           </>
@@ -234,8 +232,8 @@ function TourModal({ tour, onClose }: { tour: Tour; onClose: () => void }) {
             {bookStatus === 'success' ? (
               <div style={{ textAlign: 'center', padding: '2rem 0' }}>
                 <p style={{ fontSize: '2.5rem', marginBottom: '0.8rem' }}>✅</p>
-                <h3 style={{ fontFamily: 'Lora, serif', fontSize: '1.4rem', color: '#1a1a1a', marginBottom: '0.5rem' }}>Request sent!</h3>
-                <p style={{ fontSize: '0.85rem', color: '#888', fontFamily: 'Inter, sans-serif' }}>Our team will contact you shortly to confirm your booking.</p>
+                <h3 style={{ fontFamily: 'Lora, serif', fontSize: '1.4rem', color: '#1a1a1a', marginBottom: '0.5rem' }}>WhatsApp opened!</h3>
+                <p style={{ fontSize: '0.85rem', color: '#888', fontFamily: 'Inter, sans-serif' }}>Just hit send in WhatsApp to confirm your booking.</p>
               </div>
             ) : (
               <>
@@ -246,8 +244,6 @@ function TourModal({ tour, onClose }: { tour: Tour; onClose: () => void }) {
                   {tour.price && <span style={{ fontSize: '0.75rem', color: '#888', fontFamily: 'Inter, sans-serif' }}>per person</span>}
                 </div>
                 <p style={{ fontSize: '0.72rem', color: '#999', fontFamily: 'Inter, sans-serif', marginBottom: '0.4rem' }}>Fields marked <span style={{ color: '#c23a1a' }}>*</span> are required</p>
-                {/* Honeypot */}
-                <input name="website" type="text" defaultValue="" style={{ display: 'none' }} tabIndex={-1} aria-hidden="true" />
                 <div className="tour-modal-form-grid">
                   {([['name','Full name *'],['email','Email address *'],['phone','Phone number'],['people','Number of people']] as const).map(([name, placeholder]) => (
                     <input key={name} name={name} type={name === 'email' ? 'email' : 'text'} placeholder={placeholder}
@@ -265,7 +261,7 @@ function TourModal({ tour, onClose }: { tour: Tour; onClose: () => void }) {
                 <div style={{ display: 'flex', gap: '0.8rem', flexWrap: 'wrap' }}>
                   <button onClick={handleBook} disabled={bookStatus === 'loading'}
                     style={{ flex: 1, minWidth: '140px', background: '#2d6a4f', color: 'white', border: 'none', borderRadius: '12px', padding: '0.9rem', fontSize: '0.9rem', fontWeight: 700, cursor: bookStatus === 'loading' ? 'wait' : 'pointer', fontFamily: 'Inter, sans-serif', opacity: bookStatus === 'loading' ? 0.7 : 1 }}>
-                    {bookStatus === 'loading' ? 'Sending...' : 'Send booking request →'}
+                    {bookStatus === 'loading' ? 'Opening...' : 'Book via WhatsApp →'}
                   </button>
                   <a href="mailto:explore.illyria.info@gmail.com"
                     style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.9rem 1.5rem', borderRadius: '12px', border: '2px solid #2d6a4f', color: '#2d6a4f', textDecoration: 'none', fontSize: '0.85rem', fontWeight: 700, fontFamily: 'Inter, sans-serif', whiteSpace: 'nowrap' }}>
@@ -284,45 +280,32 @@ function TourModal({ tour, onClose }: { tour: Tour; onClose: () => void }) {
 function DestinacijeContent() {
   const [active, setActive] = useState('All');
   const [search, setSearch] = useState('');
-  const [tours, setTours] = useState<Tour[]>([]);
-  const [loading, setLoading] = useState(true);
   const [displayCount, setDisplayCount] = useState(12);
   const [selectedTour, setSelectedTour] = useState<Tour | null>(null);
   const [contactTour, setContactTour] = useState<Tour | null>(null);
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true });
 
-  useEffect(() => {
-    supabase
-      .from('tours')
-      .select('*')
-      .order('id')
-      .then(({ data, error }) => {
-        if (!error && data) {
-          setTours(data.map((t: any) => ({
-            id: t.id,
-            name: t.name,
-            image: t.image,
-            location: t.location,
-            duration: t.duration,
-            activity: t.activity,
-            difficulty: t.difficulty,
-            price: t.price,
-            priceLabel: t.price_label,
-            category: t.category,
-            tag: t.tag,
-            tagColor: t.tag_color,
-            color: t.color,
-            desc: t.description,
-            highlights: t.highlights,
-            included: t.included,
-            notIncluded: t.not_included,
-            longDesc: t.long_desc,
-          })));
-        }
-        setLoading(false);
-      });
-  }, []);
+  const tours: Tour[] = TOURS.map(t => ({
+    id: t.id,
+    name: t.name,
+    image: t.image,
+    location: t.location,
+    duration: t.duration,
+    activity: t.activity,
+    difficulty: t.difficulty,
+    price: t.price,
+    priceLabel: t.price_label,
+    category: t.category,
+    tag: t.tag,
+    tagColor: t.tag_color,
+    color: t.color,
+    desc: t.description,
+    highlights: t.highlights,
+    included: t.included,
+    notIncluded: t.not_included,
+    longDesc: t.long_desc,
+  }));
   const searchParams = useSearchParams();
 
   useEffect(() => {
@@ -392,13 +375,7 @@ function DestinacijeContent() {
 
       {/* Grid */}
       <div ref={ref} style={{ padding: 'clamp(1.5rem, 4vw, 3rem) clamp(1rem, 4vw, 4rem) clamp(3rem, 6vw, 6rem)', maxWidth: '1300px', margin: '0 auto' }}>
-        {loading ? (
-          <div style={{ textAlign: 'center', padding: '5rem 0' }}>
-            <div style={{ width: '40px', height: '40px', border: '3px solid #e0e0e0', borderTop: '3px solid #2d6a4f', borderRadius: '50%', margin: '0 auto 1rem', animation: 'spin 0.8s linear infinite' }} />
-            <p style={{ color: '#888', fontSize: '0.9rem', fontFamily: 'Inter, sans-serif' }}>Loading tours...</p>
-            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-          </div>
-        ) : filtered.length === 0 ? (
+        {filtered.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '5rem 0' }}>
             <p style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔍</p>
             <p style={{ fontFamily: 'Lora, serif', fontSize: '1.5rem', color: '#1a1a1a', marginBottom: '0.5rem' }}>No results found</p>

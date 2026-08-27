@@ -15,7 +15,7 @@
 
 # next.js
 /.next/
-/out/
+# /out/ is committed on purpose — cPanel's static export is served straight from this folder
 
 # production
 /build

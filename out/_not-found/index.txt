@@ -1,0 +1,121 @@
+1:"$Sreact.fragment"
+c:I[31236,["/_next/static/chunks/2g7puorrbecum.js"],"default",1]
+:HL["/_next/static/chunks/41p_3h_fijqlo.css","style"]
+:HL["https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap","style"]
+2:T5b0,
+          @keyframes globeBreath {
+            0%   { transform: scale(1.05); }
+            50%  { transform: scale(1.1); }
+            100% { transform: scale(1.05); }
+          }
+          @keyframes globePulse {
+            0%   { box-shadow: 0 0 60px rgba(45,106,79,0.5), 0 0 120px rgba(45,106,79,0.2); }
+            50%  { box-shadow: 0 0 90px rgba(244,162,97,0.6), 0 0 180px rgba(244,162,97,0.2); }
+            100% { box-shadow: 0 0 60px rgba(45,106,79,0.5), 0 0 120px rgba(45,106,79,0.2); }
+          }
+          @keyframes hintBlink {
+            0%, 100% { opacity: 0.5; }
+            50%       { opacity: 1; }
+          }
+          @keyframes progressLine {
+            0%   { width: 0%; }
+            100% { width: 100%; }
+          }
+          #globe-wrapper {
+            animation: globePulse 3s ease-in-out infinite;
+          }
+          #globe-wrapper:hover {
+            animation: none;
+            box-shadow: 0 0 120px rgba(244,162,97,0.8), 0 0 240px rgba(244,162,97,0.3) !important;
+          }
+          #globe-img {
+            animation: globeBreath 4s ease-in-out infinite;
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+          }
+          #globe-wrapper:hover #globe-img {
+            animation-play-state: paused;
+          }
+          #globe-hint {
+            animation: hintBlink 2s ease-in-out infinite;
+          }
+        0:{"P":null,"c":["","_not-found",""],"q":"","i":false,"f":[[["",{"children":["/_not-found",{"children":["__PAGE__",{}]}]},"$undefined","$undefined",16],[["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/chunks/41p_3h_fijqlo.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}],["$","script","script-0",{"src":"/_next/static/chunks/2g7puorrbecum.js","async":true,"nonce":"$undefined"}]],["$","html",null,{"lang":"bs","children":[["$","head",null,{"children":[["$","link",null,{"rel":"preconnect","href":"https://fonts.googleapis.com"}],["$","link",null,{"rel":"preconnect","href":"https://fonts.gstatic.com","crossOrigin":"anonymous"}],["$","link",null,{"href":"https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap","rel":"stylesheet"}],["$","style",null,{"children":"$2"}]]}],["$","body",null,{"suppressHydrationWarning":true,"children":[["$","div",null,{"id":"intro-screen","suppressHydrationWarning":true,"style":{"position":"fixed","inset":0,"zIndex":9999,"display":"flex","flexDirection":"column","alignItems":"center","justifyContent":"center","background":"radial-gradient(ellipse at center, #050a1a 0%, #000005 100%)"},"children":[["$","div",null,{"style":{"position":"absolute","inset":0,"pointerEvents":"none","backgroundImage":"radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.8) 0%, transparent 100%), radial-gradient(1px 1px at 80% 10%, rgba(255,255,255,0.6) 0%, transparent 100%), radial-gradient(1px 1px at 50% 80%, rgba(255,255,255,0.7) 0%, transparent 100%), radial-gradient(1px 1px at 10% 60%, rgba(255,255,255,0.5) 0%, transparent 100%), radial-gradient(1px 1px at 90% 70%, rgba(255,255,255,0.6) 0%, transparent 100%), radial-gradient(2px 2px at 35% 15%, rgba(255,255,255,0.4) 0%, transparent 100%), radial-gradient(1px 1px at 65% 45%, rgba(255,255,255,0.5) 0%, transparent 100%), radial-gradient(1px 1px at 15% 85%, rgba(255,255,255,0.3) 0%, transparent 100%), radial-gradient(1px 1px at 75% 55%, rgba(255,255,255,0.4) 0%, transparent 100%), radial-gradient(1px 1px at 45% 25%, rgba(255,255,255,0.6) 0%, transparent 100%)"}}],["$","div",null,{"id":"globe-wrapper","className":"globe-size","style":{"borderRadius":"50%","cursor":"pointer","position":"relative","overflow":"hidden","flexShrink":0,"background":"#000010"},"children":"$L3"}],"$L4","$L5"]}],"$L6","$L7"]}]]}]]}],{"children":["$L8",{"children":["$L9",{},null,false,null]},null,false,"$@a"]},null,false,null],"$Lb",false]],"m":"$undefined","G":["$c",["$Ld"]],"S":true,"h":null,"s":"$undefined","l":"$undefined","p":"$undefined","d":"$undefined","b":"_BX0h5wBs7VfjyjBJobqE"}
+f:I[58507,["/_next/static/chunks/2g7puorrbecum.js"],"default"]
+10:I[6870,["/_next/static/chunks/2g7puorrbecum.js"],"default"]
+11:I[64748,["/_next/static/chunks/2g7puorrbecum.js"],"OutletBoundary"]
+12:"$Sreact.suspense"
+15:I[64748,["/_next/static/chunks/2g7puorrbecum.js"],"ViewportBoundary"]
+17:I[64748,["/_next/static/chunks/2g7puorrbecum.js"],"MetadataBoundary"]
+:HL["/globe.jpeg","image"]
+3:["$","img",null,{"id":"globe-img","src":"/globe.jpeg","alt":"Globus"}]
+4:["$","p",null,{"id":"globe-hint","style":{"marginTop":"2rem","fontSize":"0.7rem","letterSpacing":"0.45em","textTransform":"uppercase","color":"rgba(255,255,255,0.6)","fontFamily":"Inter, sans-serif","transition":"opacity 0.4s"},"children":"↑ Click to begin"}]
+5:["$","p",null,{"style":{"marginTop":"0.8rem","fontFamily":"Lora, serif","fontSize":"1.6rem","color":"white","letterSpacing":"0.08em"},"children":["Explore"," ",["$","em",null,{"style":{"color":"#f4a261","fontStyle":"normal","fontWeight":700},"children":"Illyria"}]]}]
+e:T5da,
+(function() {
+  // Prikaži intro samo prvi put, ne pri svakom page navigiranju
+  var seen = sessionStorage.getItem('intro-seen');
+  var intro = document.getElementById('intro-screen');
+  if (seen && intro) {
+    intro.style.display = 'none';
+  }
+  var wrapper = document.getElementById('globe-wrapper');
+  var img = document.getElementById('globe-img');
+  var hint = document.getElementById('globe-hint');
+  var intro = document.getElementById('intro-screen');
+  var clicked = false;
+
+  if (!wrapper) return;
+
+  wrapper.addEventListener('click', function() {
+    if (clicked) return;
+    clicked = true;
+
+    img.style.animationPlayState = 'paused';
+    hint.style.opacity = '0';
+
+    var start = null;
+    var duration = 1000;
+
+    function zoomAnim(ts) {
+      if (!start) start = ts;
+      var elapsed = ts - start;
+      var t = Math.min(elapsed / duration, 1);
+      var ease = t * t * (3 - 2 * t);
+
+      var scale = 1 + ease * 12;
+      var opacity = 1 - ease * 0.9;
+
+      wrapper.style.transform = 'scale(' + scale + ')';
+      wrapper.style.opacity = opacity;
+      intro.style.opacity = String(1 - ease * 0.7);
+
+      if (t < 1) {
+        requestAnimationFrame(zoomAnim);
+      } else {
+        intro.style.transition = 'opacity 0.3s';
+        intro.style.opacity = '0';
+        setTimeout(function() {
+          intro.style.display = 'none';
+          sessionStorage.setItem('intro-seen', '1');
+        }, 350);
+      }
+    }
+
+    requestAnimationFrame(zoomAnim);
+  });
+})();
+        6:["$","script",null,{"dangerouslySetInnerHTML":{"__html":"$e"}}]
+7:["$","$Lf",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L10",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[[["$","title",null,{"children":"404: This page could not be found."}],["$","div",null,{"style":{"fontFamily":"system-ui,\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\"","height":"100vh","textAlign":"center","display":"flex","flexDirection":"column","alignItems":"center","justifyContent":"center"},"children":["$","div",null,{"children":[["$","style",null,{"dangerouslySetInnerHTML":{"__html":"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}"}}],["$","h1",null,{"className":"next-error-h1","style":{"display":"inline-block","margin":"0 20px 0 0","padding":"0 23px 0 0","fontSize":24,"fontWeight":500,"verticalAlign":"top","lineHeight":"49px"},"children":404}],["$","div",null,{"style":{"display":"inline-block"},"children":["$","h2",null,{"style":{"fontSize":14,"fontWeight":400,"lineHeight":"49px","margin":0},"children":"This page could not be found."}]}]]}]}]],[]],"forbidden":"$undefined","unauthorized":"$undefined"}]
+8:["$","$1","c",{"children":[null,["$","$Lf",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L10",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}]
+9:["$","$1","c",{"children":[[["$","title",null,{"children":"404: This page could not be found."}],["$","div",null,{"style":"$7:props:notFound:0:1:props:style","children":["$","div",null,{"children":[["$","style",null,{"dangerouslySetInnerHTML":{"__html":"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}"}}],["$","h1",null,{"className":"next-error-h1","style":"$7:props:notFound:0:1:props:children:props:children:1:props:style","children":404}],["$","div",null,{"style":"$7:props:notFound:0:1:props:children:props:children:2:props:style","children":["$","h2",null,{"style":"$7:props:notFound:0:1:props:children:props:children:2:props:children:props:style","children":"This page could not be found."}]}]]}]}]],null,["$","$L11",null,{"children":["$","$12",null,{"name":"Next.MetadataOutlet","children":"$@13"}]}]]}]
+14:[]
+a:"$W14"
+b:["$","$1","h",{"children":[["$","meta",null,{"name":"robots","content":"noindex"}],["$","$L15",null,{"children":"$L16"}],["$","div",null,{"hidden":true,"children":["$","$L17",null,{"children":["$","$12",null,{"name":"Next.Metadata","children":"$L18"}]}]}],null]}]
+d:["$","link","0",{"rel":"stylesheet","href":"/_next/static/chunks/41p_3h_fijqlo.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}]
+16:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]
+19:I[65088,["/_next/static/chunks/2g7puorrbecum.js"],"IconMark"]
+13:null
+18:[["$","title","0",{"children":"Explore Illyria – Discover the Balkans"}],["$","meta","1",{"name":"description","content":"Authentic journeys through Bosnia and Herzegovina, Croatia, Montenegro, and the rest of the Balkans."}],["$","link","2",{"rel":"icon","href":"/favicon.ico?favicon.2vob68tjqpejf.ico","sizes":"256x256","type":"image/x-icon"}],["$","$L19","3",{}]]
